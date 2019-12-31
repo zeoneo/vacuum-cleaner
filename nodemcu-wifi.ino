@@ -2,15 +2,20 @@
 
 WiFiServer server(8080);
 
-IPAddress IP(192,168,4,15);
+IPAddress IP(192,168,4,16);
 IPAddress mask = (255, 255, 255, 0);
 //byte ledPin = 16;
 byte ledPin = 2;
 
 void setup() {
  Serial.begin(115200);
+ wifi_set_phy_mode(PHY_MODE_11G);
+ WiFi.setAutoConnect(false);
+ ESP.eraseConfig();
+ WiFi.disconnect(true);
  WiFi.mode(WIFI_AP);
- WiFi.softAP("PRAKASH", "1234567890");
+ wifi_set_phy_mode(PHY_MODE_11B);
+ WiFi.softAP("PRAKASH16", "1234567890");
  WiFi.softAPConfig(IP, IP, mask);
  
  server.begin();
@@ -24,6 +29,8 @@ void setup() {
 
 void loop(void) {
   WiFiClient client = server.available();
+  WiFi.printDiag(Serial);
+  Serial.println(".........................");
 
   if (client) {
     Serial.println("Client connected.");
@@ -52,12 +59,4 @@ void loop(void) {
     Serial.println("Client disconnected.");
     client.stop();
   }
-}
-
-void printWiFiStatus() {
-  Serial.println("");
-//  Serial.print("Connected to ");
-//  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 }
