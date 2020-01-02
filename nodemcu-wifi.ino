@@ -34,7 +34,7 @@ void loop(void) {
 
   if (client) {
     Serial.println("Client connected.");
-
+  
     while (client.connected()) {
       if (client.available()) {
         String request = client.readStringUntil('\r');
@@ -54,9 +54,49 @@ void loop(void) {
          Serial.print("Byte sent to the station: ");
          Serial.println(client.println(request + "ca" + "\r"));
          Serial.println("*____COMMAND_COMPLETED____*");
+         clientFastConnected();
+      } else {
+        clientConnected();
       }
+      if(WiFi.softAPgetStationNum() == 0) {
+        Serial.println("Client disconnected.");
+    client.stop();
+        }
+      Serial.println(WiFi.softAPgetStationNum());
     }
     Serial.println("Client disconnected.");
     client.stop();
+  } else {
+    clientNotConnected();
+  }
+}
+
+void clientNotConnected() {
+  byte iter = 5;
+  for (byte i = 0; i < 5; i++) {
+    digitalWrite(ledPin, LOW);
+    delay(1200);
+    digitalWrite(ledPin, HIGH);
+    delay(1200);
+  }
+}
+
+void clientFastConnected() {
+    byte iter = 5;
+  for (byte i = 0; i < 5; i++) {
+    digitalWrite(ledPin, LOW);
+    delay(150);
+    digitalWrite(ledPin, HIGH);
+    delay(150);
+  }
+}
+
+void clientConnected() {
+    byte iter = 5;
+  for (byte i = 0; i < 5; i++) {
+    digitalWrite(ledPin, LOW);
+    delay(300);
+    digitalWrite(ledPin, HIGH);
+    delay(300);
   }
 }
